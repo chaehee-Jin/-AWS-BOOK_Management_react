@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import LoginInput from '../../components/UI/Login/LoginInput/LoginInput';
 import { FiUser, FiLock } from 'react-icons/fi';
 import { BiRename } from 'react-icons/bi';
+import axios from 'axios';
 
 
 
@@ -85,8 +86,31 @@ const Register = () => {
     const [registerUser, setRegisterUser] = useState({email:"", password:"", name:""})
 
     const onChangeHandle = (e) => {
-        setRegisterUser({...registerUser, })
+        const { name, value } = e.target;
+        setRegisterUser({...registerUser, [name]: value })
 
+    }
+
+    const registeSubmit = () => {
+        const data = {
+            ...registerUser
+        }
+        const option = {
+            headers:{
+                "Content-Type": "application/json"
+            }
+        }
+        axios.post("http://localhost:8080/auth/signup", JSON.stringify(data), option) //메소드 호출, 무조건 이것부터 실행이 되어져야함 
+        // 순서가 지켜져야한다면 비동기처리 안에다가 넣어야한다
+        .then(response =>{
+            console.log("성공");
+            console.log(response);
+        })
+        .catch(error => {
+            console.log("에러");
+            console.log(error);
+        });
+        console.log("비동기 테스트");//  axios, 비동기: 페이지를 띄울때 순서대로가 아닌, 오래걸리는 것들은 따로 띄워줌 
     }
     return (
         <div css={container}>
@@ -109,7 +133,7 @@ const Register = () => {
                         <BiRename/>
                     </LoginInput >
                     
-                    <button css={loginButton}>REGISTER</button>
+                    <button css={loginButton} onClick={registeSubmit}>REGISTER</button>
                 </div>
            </main>
             <div css={signupMessage}>Already a user?</div>
