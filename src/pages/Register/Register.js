@@ -108,7 +108,7 @@ const Register = () => {
         })
         .catch(error => {
             console.log("에러");
-            console.log(error);
+            console.log(error.response.data.errorData);
         });
         console.log("비동기 테스트");//  axios, 비동기: 페이지를 띄울때 순서대로가 아닌, 오래걸리는 것들은 따로 띄워줌 
     }
