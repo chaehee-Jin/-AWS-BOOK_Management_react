@@ -66,8 +66,6 @@ const loginButton = css`
 `;
 
 
-
-
 const signupMessage = css`
     margin-top: 20px;
     font-size: 14px;
@@ -78,12 +76,24 @@ const register = css`
     margin-top: 10px;
     font-weight: 600;     
 `;
+const errorMsg = css`
+    margin-left: 5px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: red;
+
+
+
+
+`;
+
 
 
 
 
 const Register = () => {
     const [registerUser, setRegisterUser] = useState({email:"", password:"", name:""})
+    const [errorMessages, setErrorMessages] = useState({email:"", password:"", name:""});
 
     const onChangeHandle = (e) => {
         const { name, value } = e.target;
@@ -103,14 +113,32 @@ const Register = () => {
         axios.post("http://localhost:8080/auth/signup", JSON.stringify(data), option) //메소드 호출, 무조건 이것부터 실행이 되어져야함 
         // 순서가 지켜져야한다면 비동기처리 안에다가 넣어야한다
         .then(response =>{
-            console.log("성공");
+            setErrorMessages({email:"", password:"", name:""});
             console.log(response);
+            
         })
+        // .then(str =>{
+        //     console.log(str);
+        //     return "test2";
+        //     then안에는 무조건 return이 있고 이것은 무조건 promise -> .을 찍어서 결과를 계속 이어가면서 순차적으로 연결할수 있음 
+        //     then 이 나오면 거의 promise
+        // })
+
         .catch(error => {
-            console.log("에러");
-            console.log(error.response.data.errorData);
+            setErrorMessages({email:"", password:"", name:"", ...error.response.data.errorData}); //매번 새로 초기화, ...을 찍으면 속성들을 옮겨줌 (깊은 복사)
+            // 여기에서는 에러 응답이 email 또는 name만 오거나 둘다 올수 있음, 잘못된 데이터가 넘어가면 기존에 데이터는 사라지고 에러난 데이터만 남음 
+            // 기존의 데이터는 원래 가지고 있고(기본적으로) 에러난 데이터만 덮어쓰는 형식이다
         });
-        console.log("비동기 테스트");//  axios, 비동기: 페이지를 띄울때 순서대로가 아닌, 오래걸리는 것들은 따로 띄워줌 
+        //console.log("비동기 테스트"); --> axios, 비동기: 페이지를 띄울때 순서대로가 아닌, 오래걸리는 것들은 따로 띄워줌 
+        // 비동기는 settime , 하지만 이게 callback은 아님 
+        // 내가원하는 순서대로 데이터가 처리되었을때 인증을 받아한다면 순서대로 처리될것 같지만 첫번째과정이 실행될때 다음 과정이 같이 실행될수 있음 
+        // 그것을 막기위해 첫번째과정 함수안에 2번째 과정을 넣어서 첫번째 과정이 다끝나고 두번째 과정이 들어가는 것이 callback
+        // ** 주의 ** 무조건적으로 비동기 처리를 한다고 함수를 연결연결해서 불러오면 callback지옥에 빠지기 쉬움 그것은 가독성이 떨어지니 주의
+        
+
+        // promise: 생성을  할때 new promise(콜백함수) = new promise (f(resorve, reject)), promise는 객체, 변수와 메소드를 가질수 있음 
+        // then, catch함수를 쓸수 있음 then은 그러면(결과), catch는 오류를 잡을 때 사용 ex) a.then / a.catch  or a.then.catch
+        //then은 리솔브가 실행될때, catch는 리젝트가 실행될때 사용 
     }
     return (
         <div css={container}>
@@ -123,15 +151,19 @@ const Register = () => {
                     <LoginInput type="email" placeholder="Type your email" onChange={onChangeHandle} name="email">
                         <FiUser/>
                     </LoginInput>
+                    <div css={errorMsg}>{errorMessages.email}</div>
+
                     <label css={inputLabel}>Password</label>
                     <LoginInput type="password" placeholder="Type your password" onChange={onChangeHandle} name="password">
                         <FiLock/>
                     </LoginInput >
+                    <div css={errorMsg}>{errorMessages.password}</div>
 
                     <label css={inputLabel}>Name</label>
                     <LoginInput type="text" placeholder="Type your name" onChange={onChangeHandle} name="name">
                         <BiRename/>
                     </LoginInput >
+                    <div css={errorMsg}>{errorMessages.name}</div>
                     
                     <button css={loginButton} onClick={registeSubmit}>REGISTER</button>
                 </div>
