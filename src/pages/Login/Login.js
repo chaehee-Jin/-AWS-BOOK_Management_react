@@ -7,8 +7,9 @@ import { FiUser, FiLock } from 'react-icons/fi';
 import { BsGoogle } from 'react-icons/bs';
 import { SiNaver, SiKakao } from 'react-icons/si';
 import axios from 'axios';
-import { authenticatedState } from '../../atoms/Auth/AuthAtoms';
+import { refreshState } from '../../atoms/Auth/AuthAtoms';
 import { useRecoilState } from 'recoil';
+
 
 
 
@@ -133,7 +134,8 @@ const errorMsg = css`
 const Login = () => {
     const [loginUser, setLoginUser] =useState({email:"", password:""})
     const [ errorMessages, setErrorMessages ] = useState({email:"", password:""});
-    const [ authenticated, setAuthenticated ] = useRecoilState(authenticatedState); //현재 기본값으로 false
+    const [ refresh, setRefresh ] = useRecoilState(refreshState);
+
    
     const navigate = useNavigate();
 
@@ -152,10 +154,9 @@ const Login = () => {
         try{
             const response = await axios.post("http://localhost:8080/auth/login", JSON.stringify(loginUser), option);
             setErrorMessages({email:"", password:""});
-            const accessToken = response.data.grantType + "" +response.data.accessToken;
+            const accessToken = response.data.grantType + " " +response.data.accessToken;
             localStorage.setItem("accessToken", accessToken); //토큰 생김
-            setAuthenticated(true); //여기에서 true로 설정을 해주면 전역 atom에서 true로 받음 
-           
+            setRefresh(false);
             navigate("/");
             
         }catch(error){
