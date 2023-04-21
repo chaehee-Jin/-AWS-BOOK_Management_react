@@ -7,8 +7,9 @@ import { FiUser, FiLock } from 'react-icons/fi';
 import { BsGoogle } from 'react-icons/bs';
 import { SiNaver, SiKakao } from 'react-icons/si';
 import axios from 'axios';
-import { authenticated } from '../../index';
+import { authenticatedState } from '../../atoms/Auth/AuthAtoms';
 import { useRecoilState } from 'recoil';
+
 
 
 const container= css`
@@ -131,8 +132,9 @@ const errorMsg = css`
 
 const Login = () => {
     const [loginUser, setLoginUser] =useState({email:"", password:""})
-    const [ errorMessages, setErrorMessages] = useState({email:"", password:""});
-    const [auth, setAuth] = useRecoilState(authenticated);
+    const [ errorMessages, setErrorMessages ] = useState({email:"", password:""});
+    const [ authenticated, setAuthenticated ] = useRecoilState(authenticatedState); //현재 기본값으로 false
+   
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -151,8 +153,9 @@ const Login = () => {
             const response = await axios.post("http://localhost:8080/auth/login", JSON.stringify(loginUser), option);
             setErrorMessages({email:"", password:""});
             const accessToken = response.data.grantType + "" +response.data.accessToken;
-            localStorage.setItem("accessToken", accessToken);
-            setAuth(true);
+            localStorage.setItem("accessToken", accessToken); //토큰 생김
+            setAuthenticated(true); //여기에서 true로 설정을 해주면 전역 atom에서 true로 받음 
+           
             navigate("/");
             
         }catch(error){
