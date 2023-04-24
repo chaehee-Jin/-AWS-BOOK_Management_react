@@ -30,6 +30,7 @@ const AuthRouteReactQuery = ({ path, element }) => {
     }
     
     if(!isLoading){
+        
         console.log(data)
         const permitAll = ["/login", "/register", "/password/forgot"];
         if(!data.data){
