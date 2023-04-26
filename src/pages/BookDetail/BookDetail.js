@@ -24,6 +24,17 @@ const BookDetail = () => {
         // useQuery 를 사용하지 않으려면 기다릴수 있는 isLoading을 따로 구현해야함 -> 데이터를 들고오면 state에 넣으면 상태가 변하면서 jsx가 뜨도록 만들면 됨 
         //캐시는 데이터를 저장하는 대신 서버까지는 안감, 캐싱을 처리를 안하면 페이지를 렌더링 할때마다 재렌더링 요청을 날려야함 -> 페이지 과부하 
     });
+
+    const getLikeCount = useQuery(["getLikeCount"], async()=> {
+        const option = {
+            headers:{
+                Authorization: localStorage.getItem("accessToken") 
+            }
+        }
+        const response = await axios.get(`http://localhost:8080/book/${bookId}/like`, option);
+        return response;
+
+    });
     if(getBook.isLoading){
         return <div>불러오는 중...</div>
     }
@@ -33,7 +44,7 @@ const BookDetail = () => {
             <Sidebar/>
             <header>
                 <h1>{getBook.data.data.bookName}</h1>
-                <p>분류:{getBook.data.data.categoryName} / 저자명:{getBook.data.data.authorName} / 출판사:{getBook.data.data.publisherName} / 추천:10</p>
+                <p>분류:{getBook.data.data.categoryName} / 저자명:{getBook.data.data.authorName} / 출판사:{getBook.data.data.publisherName} / 추천:{getLikeCount.isLoading ? "조회중...": getLikeCount.data.data}</p>
             </header>
             <main>
                 <div>
@@ -43,7 +54,7 @@ const BookDetail = () => {
 
                 </div>
                 <div>
-
+                    <button></button>
                 </div>
             </main>
 

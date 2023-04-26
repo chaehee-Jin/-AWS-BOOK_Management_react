@@ -108,7 +108,7 @@ const Sidebar = () => {
             enabled: accessToken //무조건 ture인 상태여야지 데이터를 들고올수있음, 동기적인 처리를 하려면 key값을 가져와야함 
                                 //데이터가 갔다가 오면 null -> true로 바뀌므로 그때서야 실행되는 것이 enabled
         }); 
-        console.log(response)
+       
         return response;
     });
 

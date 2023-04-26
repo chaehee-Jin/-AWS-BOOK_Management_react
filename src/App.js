@@ -37,3 +37,5 @@ export default App;
 // react-query는 각종 상태를 저장하고 부가가능을 제공한다, 전처리  
 //QueryClientProvider는 그것들을 저장하는 저장소  = 스토어 같은 개념 
 // 랜더가 다시되는 시점  = 마운트, 마운트가 되면 자동으로 유즈 이펙트가 실행
+
+// option은 무조건 객체형태로 들어와야함 (params, header, paramsSirization 등 사용가능 )
