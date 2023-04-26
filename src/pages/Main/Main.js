@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import BookCard from '../../components/UI/atoms/BookCard/BookCard';
+import BookCard from '../../components/UI/BookCard/BookCard';
 import { BsMenuDown } from 'react-icons/bs';
 import QueryString from 'qs';
 
@@ -94,7 +94,9 @@ const Main = () => {
         params: searchParam,
         headers: {
             Authorization: localStorage.getItem("accessToken")
-        }
+        },
+        paramsSerializer:params => QueryString.stringify(params, {arrayFormat: "repeat"})
+
     }
     const searchBooks = useQuery(["searchBooks"], async () => {
         const response = await axios.get("http://localhost:8080/books", option);
@@ -110,15 +112,15 @@ const Main = () => {
             setBooks([...books, ...response.data.bookList]);
             setSearchParam({...searchParam, page: searchParam.page + 1});
         },
-        enabled: refresh && searchParam.page < lastPage + 1
+        enabled: refresh && (searchParam.page < lastPage + 1 || lastPage === 0 )
     });
 
     const categories = useQuery(["categories"], async () => {
         const option = {
             headers: {
                 Authorization: localStorage.getItem("accessToken")
-            },
-            paramsSerializer:params => QueryString.stringify(params, {arrayFormat: "repeat"})
+            }
+            
         }
         const response = await axios.get("http://localhost:8080/categories", option);
         return response;
@@ -152,9 +154,17 @@ const Main = () => {
     }
     const searchInputHandle = (e) => {
         setSearchParam({...searchParam, page:1, searchValue: e.target.value});
-        setBooks([]);
-        setRefresh(true);
+      
 
+    }
+    const searchSubmitHandle = (e) =>{
+        if(e.keyCode === 13){
+            setSearchParam({...searchParam, page:1});
+            setBooks([]);
+            setRefresh(true);
+
+            
+        }
     }
 
     return (
@@ -175,7 +185,7 @@ const Main = () => {
                                 : ""}
                         </div>
                     </button>
-                    <input css={searchInput} type="search" onChange={searchInputHandle} />
+                    <input css={searchInput} type="search" onKeyUp = {searchSubmitHandle} onChange={searchInputHandle} />
                 </div>
             </header>
             <main css={main}>
