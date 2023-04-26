@@ -5,50 +5,41 @@ import axios from 'axios';
 import { refreshState } from '../../../atoms/Auth/AuthAtoms';
 import { useRecoilState } from 'recoil';
 
-
-
 const AuthRouteReactQuery = ({ path, element }) => {
-
-
-    const [ refresh, setRefresh] = useRecoilState(refreshState);
-    const { data, isLoading } = useQuery(["authenticated"],async() => {
+    const [ refresh, setRefresh ] = useRecoilState(refreshState);
+    const { data, isLoading } = useQuery(["authenticated"], async () => {
         const accessToken = localStorage.getItem("accessToken");
         const response = await axios.get("http://localhost:8080/auth/authenticated", {params: {accessToken}});
         return response;
-    },{
+    }, {
         enabled: refresh
-
     });
+
     useEffect(() => {
-        if(!refresh){
+        if(!refresh) {
             setRefresh(true);
         }
-    },[refresh]);
+    }, [refresh]);
     
-    if(isLoading){
+    if(isLoading) {
+        console.log("test")
         return (<div>로딩중...</div>);
     }
-    
-    if(!isLoading){
-        
-        console.log(data)
+
+    if(!isLoading) {
         const permitAll = ["/login", "/register", "/password/forgot"];
-        if(!data.data){
+        if(!data.data) {
             if(permitAll.includes(path)){
                 return element;
+            }
+            return <Navigate to="/login" />;
         }
-        return <Navigate to="/login"/>;
-
+        if(permitAll.includes(path)){ //인증되었을때
+            return <Navigate to="/" />;
+        }
+        
+        return element;
     }
-    if(permitAll.includes(path)){ //인증이 되었을 때
-        return<Navigate to="/"/>;
-    
-    }
-
-    return element;
-
-    }
-
 };
 
 export default AuthRouteReactQuery;

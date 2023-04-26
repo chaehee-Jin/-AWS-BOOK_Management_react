@@ -1,5 +1,5 @@
-/**@jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react'
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LoginInput from '../../components/UI/Login/LoginInput/LoginInput';
@@ -10,25 +10,18 @@ import axios from 'axios';
 import { refreshState } from '../../atoms/Auth/AuthAtoms';
 import { useRecoilState } from 'recoil';
 
-
-
-
-const container= css`
+const container = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 80px 30px ;
-
-
+    padding: 80px 30px;
 `;
+
 const logo = css`
     margin: 50px 0px;
     font-size: 34px;
     font-weight: 600;
-
-
 `;
-
 
 const mainContainer = css`
     display: flex;
@@ -42,15 +35,13 @@ const mainContainer = css`
 
 const authForm = css`
     width: 100%;
-    
 `;
 
 const inputLabel = css`
-    margin-left:5px;
+    margin-left: 5px;
     font-size: 12px;
     font-weight: 600;
 `;
-
 
 const forgotPassword = css`
     display: flex;
@@ -60,7 +51,6 @@ const forgotPassword = css`
     width: 100%;
     font-size: 12px;
     font-weight: 600;
-   
 `;
 
 const loginButton = css`
@@ -86,8 +76,6 @@ const oauth2Container = css`
     align-items: center;
     margin: 20px;
     width: 100%;
-
-
 `;
 
 const oauth2 = (provider) => css`
@@ -95,16 +83,15 @@ const oauth2 = (provider) => css`
     justify-content: center;
     align-items: center;
     margin: 0px 10px;
-    border: 1px solid ${provider === "google" ? "#0075ff" : provider === "naver" ? "#19ce60": "#ffdc00"};
+    border: 3px solid ${provider === "google" ? "#0075ff" : provider === "naver" ? "#19ce60" : "#ffdc00"};
     border-radius: 50%;
     width: 50px;
     height: 50px;
-    font-size: ${provider === "kakao" ? "30px" : "20px" };
+    font-size: ${provider === "kakao" ? "30px" : "20px"};
     cursor: pointer;
-    &:hover{
-        background-color: ${provider === "google" ? "#0075ff" : provider === "naver" ? "#19ce60": "#ffdc00"} ;
+    &:hover {
+        background-color: ${provider === "google" ? "#0075ff" : provider === "naver" ? "#19ce60" : "#ffdc00"};
     }
-
 `;
 
 const signupMessage = css`
@@ -113,9 +100,10 @@ const signupMessage = css`
     font-weight: 600;
     color: #777;
 `;
+
 const register = css`
     margin-top: 10px;
-    font-weight: 600;     
+    font-weight: 600;
 `;
 
 const errorMsg = css`
@@ -123,84 +111,75 @@ const errorMsg = css`
     margin-bottom: 20px;
     font-size: 12px;
     color: red;
-
-
 `;
 
-
-
-
-
 const Login = () => {
-    const [loginUser, setLoginUser] =useState({email:"", password:""})
-    const [ errorMessages, setErrorMessages ] = useState({email:"", password:""});
+    const [ loginUser, setLoginUser ] = useState({email: "", password: ""});
+    const [ errorMessages, setErrorMessages ] = useState({email: "", password: ""});
     const [ refresh, setRefresh ] = useRecoilState(refreshState);
 
-   
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
-        setLoginUser({...loginUser, [name]: value})
-
-
+        const { name, value } = e.target;
+        setLoginUser({ ...loginUser, [name]: value });
     }
-    const loginHandleSubmit = async() => {
+
+    const loginHandleSubmit = async () => {
         const option = {
-            headers:{
-                "Content-Type":"application/json"
+            headers: {
+                "Content-Type": "application/json"
             }
         }
-        try{
+        try {
             const response = await axios.post("http://localhost:8080/auth/login", JSON.stringify(loginUser), option);
-            setErrorMessages({email:"", password:""});
-            const accessToken = response.data.grantType + " " +response.data.accessToken;
-            localStorage.setItem("accessToken", accessToken); //토큰 생김
+            setErrorMessages({email: "", password: ""});
+            const accessToken = response.data.grantType + " " + response.data.accessToken;
+            localStorage.setItem("accessToken", accessToken);
             setRefresh(false);
             navigate("/");
-            
-        }catch(error){
-            setErrorMessages({email:"", password:"", ...error.response.data.errorData});
-
+        }catch(error) {
+            setErrorMessages({email: "", password: "", ...error.response.data.errorData});
         }
     }
 
     return (
         <div css={container}>
-           <header>
+            <header>
                 <h1 css={logo}>Login</h1>
-           </header>
-           <main css={mainContainer}>
+            </header>
+            <main css={mainContainer}>
                 <div css={authForm}>
                     <label css={inputLabel}>Email</label>
                     <LoginInput type="email" placeholder="Type your email" onChange={handleChange} name="email">
-                        <FiUser/>
+                        <FiUser />
                     </LoginInput>
                     <div css={errorMsg}>{errorMessages.email}</div>
 
                     <label css={inputLabel}>Password</label>
                     <LoginInput type="password" placeholder="Type your password" onChange={handleChange} name="password">
-                        <FiLock/>
-                    </LoginInput >
+                        <FiLock />
+                    </LoginInput>
                     <div css={errorMsg}>{errorMessages.password}</div>
 
                     <div css={forgotPassword}><Link to="/forgot/password">Forgot Password?</Link></div>
                     <button css={loginButton} onClick={loginHandleSubmit}>LOGIN</button>
                 </div>
-           </main>
-                <div css={signupMessage}>Or Sign Up Using</div>
+            </main>
 
-                <div css={oauth2Container}>
-                    <div css={oauth2("google")}><BsGoogle/></div>
-                    <div css={oauth2("naver")}><SiNaver/></div>
-                    <div css={oauth2("kakao")}><SiKakao/></div>
-                </div>
+            <div css={signupMessage}>Or Sign Up Using</div>
 
-                <div css={signupMessage}>Or Sign Up Using</div>
-           <footer>
+            <div css={oauth2Container}>
+                <div css={oauth2("google")}><BsGoogle /></div>
+                <div css={oauth2("naver")}><SiNaver /></div>
+                <div css={oauth2("kakao")}><SiKakao /></div>
+            </div>
+
+            <div css={signupMessage}>Or Sign Up Using</div>
+
+            <footer>
                 <div css={register}><Link to="/register">SIGN UP</Link></div>
-           </footer>
-
+            </footer>
         </div>
     );
 };

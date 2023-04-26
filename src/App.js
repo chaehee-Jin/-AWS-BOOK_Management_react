@@ -1,35 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
-import { Global } from '@emotion/react';
-import { Reset } from './styles/Global/reset';
+import { Global } from '@emotion/react'
+import { Reset } from "./styles/Global/reset";
 import { Route, Routes } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Main from './pages/Main/Main';
-import AuthRoute from './components/Routes/AuthRoute/AuthRoute';
+// import AuthRoute from './components/Routes/AuthRoute/AuthRoute';
 import AuthRouteReactQuery from './components/Routes/AuthRoute/AuthRouteReactQuery';
 
-
-
-
 function App() {
-  console.log("test");
-
   return (
-<>
-    <Global styles={ Reset }></Global>
-    <Routes>
-      <Route exact path="/login" element={<AuthRouteReactQuery path="/login" element={<Login/>}/>}></Route>
-      <Route path="/register" element={<AuthRouteReactQuery  path="/register" element={<Register/>}/>}></Route>
-      <Route path="/" element={<AuthRouteReactQuery  path="/" element={<Main/>}/> }/>
-      <Route path="/admin/search" element={<AuthRouteReactQuery  path="/" element={<Main/>}/> }/>
-     
+    <>
+      <Global styles={ Reset }></Global>
+      <Routes>
+        <Route exact path="/login" element={ <AuthRouteReactQuery path="/login" element={<Login />} /> } />
+        <Route path="/register" element={ <AuthRouteReactQuery path="/register" element={<Register />} /> } />
+        <Route path="/" element={ <AuthRouteReactQuery path="/" element={<Main />} /> } />
+        <Route path="/admin/search" element={ <AuthRouteReactQuery path="/" element={<Main />} /> } />
 
-      {/* <Route path="/callback" Component={Callback}></Route>
-      <Route path="/promise" Component={PromiseStudy}></Route> */}
-      
-    </Routes >
-</>
+      </Routes>
+    </>
   );
 }
 
@@ -45,5 +34,4 @@ export default App;
 //usequery는 get요청만 쓴다 get요청을 하면 내가 이전에 get요청을 한적이 있으면 상태에 그 값을 가지고 있음, 값이 같으면 중복요청을 없애버림 (자동처리)
 // react-query는 각종 상태를 저장하고 부가가능을 제공한다, 전처리  
 //QueryClientProvider는 그것들을 저장하는 저장소  = 스토어 같은 개념 
-// 랜더가 다시되는 시점  = 마운트, 마운트가 되면 자동으로 유즈 이펙트가 실행 
-
+// 랜더가 다시되는 시점  = 마운트, 마운트가 되면 자동으로 유즈 이펙트가 실행
