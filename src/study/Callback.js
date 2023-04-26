@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+//콜백: 비동기 처리후에 함수 실행을 해야하는 경우사용
 const Callback = () => {
 
     const[cnt, setCnt] = useState(0);
@@ -59,3 +60,29 @@ const Callback = () => {
 };
 
 export default Callback;
+
+//settimeout은 시간을 지연시켜주는 것  => setTimeout( , )  앞은 콜백 함수, 뒤는 지연시간 -> 갔다가 돌아오면 몇초뒤에 실행 (차례대로 실행 x) / 동기는 갔다가 바로 실행 
+// ex) a -> b -> c면 b가 콜백함수라고 가정하고 1초뒤 실행하라고 제시를 하였을 때 a-> c -> b 이런식으로 실행 
+// 출력1과 출력2가 있다고 가정했을때 함수가 1개밖에 없을 경우 -> setTimeout(() => { }, 2000)       f(함수를 받을수 있는 변수명 )-> console.log를 찍은 후 함수를 받을수 있는 변수명을 호출 
+
+
+// 질문1.)) 맨처음 끝이 찍히는 것은 아무것도 없는게 갔다와서 빈값이니깐 console만 찍히는건가요?  -> 답) 1: 비동기 2:비동기 3:끝(동기) 이면 끝이 맨먼저 찍힘 
+// 질문2.)) f2가 아까 출력1이라고 알고 있는데 이건 왜 가나다가 찍히는 건가요?-> 답) 콜백으로 넣어놓았기 때문에 함수안에 함수라서 가나다가찍힘 
+
+//promise의 동작원리: 1. resolve 함수를 넣으면 함수가 리턴  2.react 에러객체를 생성해서 넣음 
+// then 이랑 catch는 promise객체안에서만 들어있는 함수라 promise에만 존재
+// resolve가 있으면 then이 실행, react가 있으면 catch -> 참이면 resolve, 거짓이면 react실행 
+// then은 콜백함수 함수1,2,3이 차례대로 실행되길 바란다면  함수 1을 promise안에다가 넣고 함수 2의 결과가 resolve가 되도록 만들어주어야함 
+// 이 promise를 리턴을 해주면 그다음 함수2가 그결과를 받아서 써야함 , 오류가 없으면 리턴 
+// then().then()이렇게 찍을수 있음 / then에는 콜백함수가 들어갈수 있다
+
+
+// async await -> await을 다는 이유: 콜백함수 안에다가 await을 달수 있음, await은 promise에다가만 사용가능
+// async () => {} -> new promise({함수 }) 그래서 try ~ catch사용가능 , async가 달리는 순간 promise도 비동기 
+
+
+
+// await으로 달면 비동기를 동기처럼 사용가능하다 -> promise가 갔다가 오면 실행되도록 들어있기때문에
+
+
+ 
