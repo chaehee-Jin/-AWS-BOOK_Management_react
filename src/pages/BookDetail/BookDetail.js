@@ -3,8 +3,9 @@ import { css } from '@emotion/react'
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import axios from 'axios';
+import RentalList from '../../components/UI/BookDetail/RentalList/RentalList';
 
 const mainContainer = css`
     padding: 10px;
@@ -12,6 +13,9 @@ const mainContainer = css`
 
 const BookDetail = () => {
     const { bookId } = useParams();  //정보를 하나의 변수에 저장하기위해 useparams 사용
+    const queryClient = useQueryClient();
+   
+
     const getBook = useQuery(["getBook"], async () => { //중복 값을 처리하기위해 useQuery사용 
         const option = {
             headers:{
@@ -35,6 +39,57 @@ const BookDetail = () => {
         return response;
 
     });
+
+    const getLikeStatus = useQuery(["getLikeStatus"], async()=> {
+        const option = {
+            params:{
+                userId: queryClient.getQueryData("principal").data.userId
+            },
+            headers:{
+                Authorization: localStorage.getItem("accessToken") 
+            }
+        }
+        const response = await axios.get(`http://localhost:8080/book/${bookId}/like/status`, option);
+        return response;
+
+    });
+    // post 요청 
+    const setLike = useMutation(async()=> {
+        const option = {
+            headers:{
+                "Content-Type": "application/json",
+                Authorization: localStorage.getItem("accessToken") 
+            }
+        }
+        return await axios.post(`http://localhost:8080/book/${bookId}/like`, JSON.stringify({
+            userId: queryClient.getQueryData("principal").data.userId
+        }), option);
+    },{
+        onSuccess: () =>{
+            queryClient.invalidateQueries("getLikeCount");
+            queryClient.invalidateQueries("getLikeStatus"); //invalidateQueries: 캐싱을 지워버림 
+        }
+    
+    });
+
+    const disLike = useMutation(async()=> {
+        const option = {
+            params:{
+                userId: queryClient.getQueryData("principal").data.userId
+            },
+            headers: {
+                Authorization: localStorage.getItem("accessToken")
+            }
+
+        }
+        return await axios.delete(`http://localhost:8080/book/${bookId}/like`,option);
+    },{
+        onSuccess: () =>{
+            queryClient.invalidateQueries("getLikeCount");
+            queryClient.invalidateQueries("getLikeStatus"); 
+        }
+    });
+
     if(getBook.isLoading){
         return <div>불러오는 중...</div>
     }
@@ -51,10 +106,14 @@ const BookDetail = () => {
                     <img src={getBook.data.data.coverImgUrl} alt={getBook.data.data.categoryName}/>
                 </div>
                 <div>
-
+                    <RentalList bookId={bookId}/>
                 </div>
                 <div>
-                    <button></button>
+                    {getLikeStatus.isLoading 
+                    ? ""
+                    : getLikeStatus.data.data === 0
+                         ? (<button onClick={() => {setLike.mutate()}}>추천하기</button>)
+                         : (<button onClick={() => {disLike.mutate()}}>추천취소</button>)}
                 </div>
             </main>
 
