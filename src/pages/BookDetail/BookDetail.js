@@ -67,7 +67,7 @@ const BookDetail = () => {
     },{
         onSuccess: () =>{
             queryClient.invalidateQueries("getLikeCount");
-            queryClient.invalidateQueries("getLikeStatus"); //invalidateQueries: 캐싱을 지워버림 
+            queryClient.invalidateQueries("getLikeStatus"); //invalidateQueries: 캐싱을 지워버림 , 지워지면 초기화 되기때문에 새로 받아옴 , 새로 데이터를 받아오면 상태가 변함 
         }
     
     });
@@ -85,7 +85,7 @@ const BookDetail = () => {
         return await axios.delete(`http://localhost:8080/book/${bookId}/like`,option);
     },{
         onSuccess: () =>{
-            queryClient.invalidateQueries("getLikeCount");
+            queryClient.invalidateQueries("getLikeCount"); // 나만 추천을 누른것이 아닐수 있음 , 동시에 여러사람들이 추천을 누를 경우  ex) 100명의 사람들이 동시에 추천을 눌렀을경우 100개가 추가된 데이터을 들고와야함 
             queryClient.invalidateQueries("getLikeStatus"); 
         }
     });
